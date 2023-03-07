@@ -92,25 +92,10 @@ int lowest_match(struct term *terms, int nterms, char *substr)
     int high = nterms;
     int low = 0;
     char reduced_term[200];
-    int i = 0;
-    int ans_ind;
 
     reduce_string(substr, terms, reduced_term, low);
     if(strcmp(substr, reduced_term) == 0){
         return low;
-    }
-
-    reduce_string(substr, terms, reduced_term, high);
-    if(strcmp(substr, reduced_term) == 0){
-        ans_ind = high;
-        i = 1;
-        reduce_string(substr, terms, reduced_term, high - i);
-        while(strcmp(substr, reduced_term) == 0){
-            ans_ind = high - i;
-            i++;
-            reduce_string(substr, terms, reduced_term, high - i);
-        }
-        return ans_ind;
     }
 
     while (low != high){
@@ -120,15 +105,12 @@ int lowest_match(struct term *terms, int nterms, char *substr)
         reduce_string(substr, terms, reduced_term, mid);
 
         if(strcmp(substr, reduced_term) == 0){
-            ans_ind = mid;
-            i = 1;
-            reduce_string(substr, terms, reduced_term, mid - i);
-            while(strcmp(substr, reduced_term) == 0){
-                ans_ind = mid - i;
-                i++;
-                reduce_string(substr, terms, reduced_term, mid - i);
-            }
-            return ans_ind; 
+            reduce_string(substr, terms, reduced_term, (mid - 1));
+            if(strcmp(substr, reduced_term) == 0){
+                high = mid;
+            }else{
+                return mid;
+            } 
         }else if(strcmp(substr, reduced_term) < 0){
             high = mid - 1;
         }else if(strcmp(substr, reduced_term) > 0){
@@ -143,21 +125,6 @@ int highest_match(struct term *terms, int nterms, char *substr)
     int high = nterms;
     int low = 0;
     char reduced_term[200];
-    int i = 0;
-    int ans_ind;
-
-    reduce_string(substr, terms, reduced_term, low);
-    if(strcmp(substr, reduced_term) == 0){
-        ans_ind = low;
-        i = 1;
-        reduce_string(substr, terms, reduced_term, low + i);
-        while(strcmp(substr, reduced_term) == 0){
-            ans_ind = low + i;
-            i++;
-            reduce_string(substr, terms, reduced_term, low + i);
-        }
-        return ans_ind;
-    }
 
     reduce_string(substr, terms, reduced_term, high);
     if(strcmp(substr, reduced_term) == 0){
@@ -171,15 +138,12 @@ int highest_match(struct term *terms, int nterms, char *substr)
         reduce_string(substr, terms, reduced_term, mid);
 
         if(strcmp(substr, reduced_term) == 0){
-            ans_ind = mid;
-            i = 1;
-            reduce_string(substr, terms, reduced_term, mid + i);
-            while(strcmp(substr, reduced_term) == 0){
-                ans_ind = mid + i;
-                i++;
-                reduce_string(substr, terms, reduced_term, mid + i);
+            reduce_string(substr, terms, reduced_term, (mid + 1));
+            if(strcmp(substr, reduced_term) == 0){
+                low = mid;
+            }else{
+                return mid;
             }
-            return ans_ind; 
         }else if(strcmp(substr, reduced_term) < 0){
             high = mid - 1;
         }else if(strcmp(substr, reduced_term) > 0){
